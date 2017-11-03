@@ -9,8 +9,6 @@ function mm_register_post_types() {
 }
 add_action( 'init', 'mm_register_post_types' );
 
-
-
 require_once('lib/rest-api-endpoints.php');
 
 /**

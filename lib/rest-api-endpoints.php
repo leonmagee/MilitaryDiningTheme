@@ -7,59 +7,6 @@
  */
 
 
-
- $args = array( 'post_type' => 'mess_halls' );
-
- $mess_hall_query = new WP_Query( $args );
-
- $data_array = array();
-
- $counter = 0;
-
- while ( $mess_hall_query->have_posts() ) {
-
-   $mess_hall_query->the_post();
-
-   $name        = get_the_title();
-   $latitude       = get_field( 'latitude' );
-   $longitude     = get_field( 'longitude' );
-   $menus        = get_field( 'menus' );
-
-   $data_array[$counter]['name'] = $name;
-   $data_array[$counter]['coordinates']['latitude'] = $latitude;
-   $data_array[$counter]['coordinates']['longitude'] = $longitude;
-   //var_dump($menus);
-   $menu_counter = 0;
-   foreach( $menus as $menu ) {
-     var_dump($menu);
-     $data_array[$counter]['menus'][$menu_counter]['day'] = $menu['day'];
-     $data_array[$counter]['menus'][$menu_counter]['date'] = $menu['date'];
-
-     $breakfast_items_array = array();
-     foreach( $menu['breakfast_items'] as $item ) {
-       $breakfast_items_array[] = array(
-         'name' => $item['menu_item'],
-         'portion' => $item['portion_size'],
-         'cal' => $item['calories'],
-         'fat' => $item['fat'],
-         'pro' => $item['protein'],
-         'carb' => $item['carbs']
-       );
-     }
-     $data_array[$counter]['menus'][$menu_counter]['breakfast'] = $breakfast_items_array;
-
-     ++$menu_counter;
-   }
-
-
-
-
-   ++$counter;
-
- }
-
-d( $data_array);
-
 // coordinates: {
 //   latitude: 32.759143,
 //   longitude: -117.146394
@@ -103,8 +50,114 @@ function cr_register_rest_endpoint() {
 }
 
 function md_rest_api_callback_menus() {
-  $array_new = array('mess_hall' => 'test mess hall', 'menus' => array('menu 1', 'menu 2', 'menu 3') );
-  return $array_new;
+
+
+
+   $args = array( 'post_type' => 'mess_halls' );
+
+   $mess_hall_query = new WP_Query( $args );
+
+   $data_array = array();
+
+   $counter = 0;
+
+   while ( $mess_hall_query->have_posts() ) {
+
+     $mess_hall_query->the_post();
+
+     $name        = get_the_title();
+     $latitude       = get_field( 'latitude' );
+     $longitude     = get_field( 'longitude' );
+     $menus        = get_field( 'menus' );
+
+     $data_array[$counter]['name'] = $name;
+     $data_array[$counter]['coordinates']['latitude'] = $latitude;
+     $data_array[$counter]['coordinates']['longitude'] = $longitude;
+     $menu_counter = 0;
+     foreach( $menus as $menu ) {
+       $data_array[$counter]['menus'][$menu_counter]['day'] = $menu['day'];
+       $data_array[$counter]['menus'][$menu_counter]['date'] = $menu['date'];
+
+       if ($menu['breakfast_items']) {
+         $breakfast_items_array = array();
+         foreach( $menu['breakfast_items'] as $item ) {
+           $breakfast_items_array[] = array(
+             'name' => $item['menu_item'],
+             'portion' => $item['portion_size'],
+             'cal' => $item['calories'],
+             'fat' => $item['fat'],
+             'pro' => $item['protein'],
+             'carb' => $item['carbs']
+           );
+         }
+         $data_array[$counter]['menus'][$menu_counter]['breakfast'] = $breakfast_items_array;
+       }
+
+       if ($menu['lunch_items']) {
+         $lunch_items_array = array();
+         foreach( $menu['lunch_items'] as $item ) {
+           $lunch_items_array[] = array(
+             'name' => $item['menu_item'],
+             'portion' => $item['portion_size'],
+             'cal' => $item['calories'],
+             'fat' => $item['fat'],
+             'pro' => $item['protein'],
+             'carb' => $item['carbs']
+           );
+         }
+         $data_array[$counter]['menus'][$menu_counter]['lunch'] = $lunch_items_array;
+       }
+
+       if ($menu['dinner_items']) {
+         $dinner_items_array = array();
+         foreach( $menu['dinner_items'] as $item ) {
+           $dinner_items_array[] = array(
+             'name' => $item['menu_item'],
+             'portion' => $item['portion_size'],
+             'cal' => $item['calories'],
+             'fat' => $item['fat'],
+             'pro' => $item['protein'],
+             'carb' => $item['carbs']
+           );
+         }
+         $data_array[$counter]['menus'][$menu_counter]['dinner'] = $dinner_items_array;
+       }
+
+       if ($menu['pastry_bar_items']) {
+         $pastry_bar_items_array = array();
+         foreach( $menu['pastry_bar_items'] as $item ) {
+           $pastry_bar_items_array[] = array(
+             'name' => $item['menu_item'],
+             'portion' => $item['portion_size'],
+             'cal' => $item['calories'],
+             'fat' => $item['fat'],
+             'pro' => $item['protein'],
+             'carb' => $item['carbs']
+           );
+         }
+         $data_array[$counter]['menus'][$menu_counter]['pastry_bar'] = $pastry_bar_items_array;
+       }
+
+
+       ++$menu_counter;
+     }
+     ++$counter;
+
+   }
+
+  //d( $data_array);
+
+  return $data_array;
+
+
+
+
+
+
+
+
+  //$array_new = array('mess_hall' => 'test mess hall', 'menus' => array('menu 1', 'menu 2', 'menu 3') );
+  //return $array_new;
 }
 
 
