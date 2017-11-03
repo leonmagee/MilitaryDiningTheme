@@ -5,6 +5,77 @@
  *
  * I will need to use the WP API plugin and make modifications so that I can post to the reservations cpt.
  */
+
+
+
+ $args = array( 'post_type' => 'mess_halls' );
+
+ $mess_hall_query = new WP_Query( $args );
+
+ $data_array = array();
+
+ $counter = 0;
+
+ while ( $mess_hall_query->have_posts() ) {
+
+   $mess_hall_query->the_post();
+
+   $name        = get_the_title();
+   $latitude       = get_field( 'latitude' );
+   $longitude     = get_field( 'longitude' );
+   $menus        = get_field( 'menus' );
+
+   $data_array[$counter]['name'] = $name;
+   $data_array[$counter]['coordinates']['latitude'] = $latitude;
+   $data_array[$counter]['coordinates']['longitude'] = $longitude;
+   //var_dump($menus);
+   $menu_counter = 0;
+   foreach( $menus as $menu ) {
+     var_dump($menu);
+     $data_array[$counter]['menus'][$menu_counter]['day'] = $menu['day'];
+     $data_array[$counter]['menus'][$menu_counter]['date'] = $menu['date'];
+
+     $breakfast_items_array = array();
+     foreach( $menu['breakfast_items'] as $item ) {
+       $breakfast_items_array[] = array(
+         'name' => $item['menu_item'],
+         'portion' => $item['portion_size'],
+         'cal' => $item['calories'],
+         'fat' => $item['fat'],
+         'pro' => $item['protein'],
+         'carb' => $item['carbs']
+       );
+     }
+     $data_array[$counter]['menus'][$menu_counter]['breakfast'] = $breakfast_items_array;
+
+     ++$menu_counter;
+   }
+
+
+
+
+   ++$counter;
+
+ }
+
+d( $data_array);
+
+// coordinates: {
+//   latitude: 32.759143,
+//   longitude: -117.146394
+// },
+ // day: '1',
+ // breakfast: [
+ //   {
+ //     cal: 101,
+ //     fat: 3.3,
+ //     pro: 2.4,
+ //     carb: 21.7
+
+
+
+
+
 add_action( 'rest_api_init', 'cr_register_rest_endpoint' );
 
 function cr_register_rest_endpoint() {

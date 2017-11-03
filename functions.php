@@ -3,7 +3,16 @@
 /**
 * Add Files
 **/
+require_once('lib/generate-custom-post-type.php');
+function mm_register_post_types() {
+	md_create_wp_cpt::create_post_type( 'mess_halls', 'Mess Hall', 'Mess Halls', 'mess_halls', 'carrot' );
+}
+add_action( 'init', 'mm_register_post_types' );
+
+
+
 require_once('lib/rest-api-endpoints.php');
+
 /**
  * Military Dining functions and definitions
  *
